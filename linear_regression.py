@@ -2,7 +2,7 @@ import pandas as pd
 import seaborn as sns
 import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import SGDRegressor
 from sklearn.preprocessing import StandardScaler
 
 df = pd.read_csv('Fish.csv')
@@ -19,7 +19,7 @@ df_X = df.drop(columns=['Weight'])
 df_y = df['Weight']
 
 for i in range(n_splits):
-    model = LinearRegression()
+    model = SGDRegressor(loss='squared_error', alpha=0.000001, max_iter=10)
     X_train, X_test, y_train, y_test = train_test_split(
         df_X, df_y, test_size=0.2, train_size=0.8)  # Dividir el set en train y test
     model.fit(X_train, y_train)  # Entrenar modelo
@@ -41,5 +41,5 @@ X = pd.DataFrame([X], columns=df_X.columns)
 y = model.predict(X)
 X.insert(0, 'Weight', y)
 prediction = pd.DataFrame(scaler.inverse_transform(X), columns=[X.columns])
-weight = prediction['Weight'].iloc[0][0]
+weight = abs(prediction['Weight'].iloc[0][0])
 print(f'Weight of fish 2: {round(weight,4)}')
