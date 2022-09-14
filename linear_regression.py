@@ -1,6 +1,6 @@
 import pandas as pd
-import seaborn as sns
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import SGDRegressor
 from sklearn.preprocessing import StandardScaler
@@ -24,8 +24,23 @@ for i in range(n_splits):
         df_X, df_y, test_size=0.2, train_size=0.8)  # Dividir el set en train y test
     model.fit(X_train, y_train)  # Entrenar modelo
     # Medir R^2 de los resultados con X's test y la 'y' real
+    y_predict = model.predict(X_test)
     r2 = model.score(X_test, y_test)
+    bias = np.mean((y_test - y_predict.mean())**2)
+    variance = np.mean(np.var(y_predict))
     print(f'R^2 Score with {i+1} split: {round(r2,4)}')
+    print(f'Bias: {round(bias,4)}  Variance: {round(variance,4)}\n')
+
+n = range(len(y_test))
+plt.figure()
+plt.plot(n, y_predict, 'o-', label='hat y')
+plt.plot(n, y_test, 'o-', label='real y', )
+plt.legend(loc='best', fancybox=True, shadow=True)
+plt.xlabel('n')
+plt.ylabel('value')
+plt.grid(True)
+plt.title('Real y vs hat y')
+plt.show()
 
 # PREDICCIONES
 X = np.array([0.02, -0.179, 0.821, 0.426, 0.596])
